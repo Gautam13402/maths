@@ -1,4 +1,4 @@
-FROM amazon:8
+FROM amazoncorretto:8
 
 MAINTAINER Gautam T
 
