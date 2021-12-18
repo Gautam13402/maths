@@ -1,0 +1,45 @@
+version: 2.0
+
+phases:
+  pre_build:
+    commands:
+      - echo logging in to Amazon ECR...
+      - aws -version
+      - $(aws ecr get-login --region $AWS_REGION --no-include-email)
+      - REPOSITORY_URI=097197935076.dkr.ecr.ap-south-1.amazonaws.com/maths
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID |  awk -F":" '{print $2}')
+
+  install:
+    runtime-versions:
+      java: 8
+
+  build:
+    commands:
+      - echo Build started on 'date'
+      - ./mvnw clean build
+      - echo Building the docker image..
+      - docker build -t $REPOSITORY_URI
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+
+  post_build:
+    commands:
+      - echo Build completed on 'date'
+      - echo Pushing the docker image..
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing image definations file...
+      - printf '[{"name":"cicd-container", "imageuri":"%s"}]'  $REPOSITORY_URI:$IMAGE_TAG > imagedefinations.json
+      - cat imagedefinations.json
+
+artifacts:
+  files:
+    - '**/*'
+    - imagedefinations.json
+  base-directory: './build/libs'
+reports:
+    test-report-group: #junit reports
+      files:
+        - 'TEST-com.gautam.MathsApplicationTests.xml'
+      #discard-paths: false # do not remove filepaths from test result files
+      base-directory: './build/test-results/test'
