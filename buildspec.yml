@@ -6,7 +6,7 @@ phases:
       - echo logging in to Amazon ECR...
       - aws --version
       - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
-      - $IMAGE_REPO_NAME=097197935076.dkr.ecr.ap-south-1.amazonaws.com/maths
+      - REPOSITORY_URI=097197935076.dkr.ecr.ap-south-1.amazonaws.com/maths
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID |  awk -F":" '{print $2}')
 
@@ -17,20 +17,20 @@ phases:
   build:
     commands:
       - echo Build started on 'date'
-      - mvn clean install
+      - mvn install
       - echo Building the docker image..
-      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG
+      - docker build -t $REPOSITORY_URI:latest .
       - echo Tagging Docker image..
-      - docker tag $IMAGE_REPO_NAME:latest $IMAGE_REPO_NAME:$IMAGE_TAG
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
 
   post_build:
     commands:
       - echo Build completed on 'date'
       - echo Pushing the docker image..
-      - docker push $IMAGE_REPO_NAME:latest
-      - docker push $IMAGE_REPO_NAME:$IMAGE_TAG
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Writing image definations file...
-      - printf '[{"name":"cicd-container", "imageuri":"%s"}]'  $IMAGE_REPO_NAME:$IMAGE_TAG > imagedefinations.json
+      - printf '[{"name":"cicd-container", "imageuri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinations.json
       - cat imagedefinations.json
 
 artifacts:
