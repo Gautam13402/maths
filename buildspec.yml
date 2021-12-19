@@ -37,10 +37,10 @@ artifacts:
   files:
     - '**/*'
     - imagedefinations.json
-  base-directory: './build/libs'
+  base-directory: './target'
 reports:
     test-report-group: #junit reports
       files:
         - 'TEST-com.gautam.MathsApplicationTests.xml'
       #discard-paths: false # do not remove filepaths from test result files
-      base-directory: './build/test-results/test'
+      base-directory: './target/test-classes/test'
