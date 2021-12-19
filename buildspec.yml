@@ -43,4 +43,4 @@ reports:
       files:
         - 'TEST-com.gautam.maths.MathsApplicationTests.xml'
       #discard-paths: false # do not remove filepaths from test result files
-      base-directory: 'target/surefire-reports''
+      base-directory: 'target/surefire-reports'
