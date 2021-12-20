@@ -7,15 +7,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/maths")
 public class MathController {
 
     @Autowired
     private MathService mathService;
 
-    @PostMapping("/test")
+    @PostMapping("/getAdd")
     public Result getAdditionResult(@RequestParam(name = "num1") int num1, @RequestParam(name = "num2") int num2){
 
         return mathService.doAddition(num1, num2);
+    }
+
+    @PostMapping("/getSubtract")
+    public Result getSubtractionResult(@RequestParam(name = "num1") int num1, @RequestParam(name = "num2") int num2){
+
+        return mathService.doSubtraction(num1, num2);
     }
 }

@@ -37,7 +37,7 @@ artifacts:
   files:
     - '**/*'
     - imagedefinations.json
-  base-directory: '/target'
+  base-directory: 'target'
 reports:
     test-report-group: #junit reports
       files:
